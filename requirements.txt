@@ -1,0 +1,41 @@
+# Install PyTorch separately first, matched to your CUDA version
+# (see https://pytorch.org). SAM2/HiM2SAM are built against:
+#   python >= 3.10, torch >= 2.3.1, torchvision >= 0.18.1  (CUDA 12.1 default)
+torch>=2.3.1
+torchvision>=0.18.1
+
+# Core (inference + training)
+numpy>=1.24.4
+tqdm>=4.66.1
+hydra-core>=1.3.2
+omegaconf>=2.3.0
+iopath>=0.1.10
+pillow>=9.4.0
+opencv-python>=4.7.0
+einops>=0.7.0          # runtime dep of mamba-ssm (installed here since mamba uses --no-deps)
+huggingface_hub>=0.23  # used by mamba-ssm (mamba2) and sam2 build_sam HF loader
+transformers<4.41      # mamba-ssm 2.2.2 imports generation classes removed in transformers 4.41
+
+# Long-term memory management (HiM2SAM rvcot / Kalman filter)
+scipy>=1.10.0
+# CoTracker3 is loaded on first inference via torch.hub
+# (facebookresearch/co-tracker, auto-downloaded — needs internet). No pip package.
+#
+# NOTE: the 'default' rvcot memory-selection variant additionally needs the VOT
+# toolkit (`pip install vot-toolkit`). The provided LaSOT / LaSOT-ext configs do
+# NOT use it, so it is optional and left out by default.
+
+# NOTE: the predictive-memory branch also needs `mamba-ssm` and
+# `causal-conv1d`. They build CUDA kernels and import torch at build time, so
+# they CANNOT be installed here (pip build isolation has no torch) and must be
+# installed separately with --no-build-isolation. See the README "Install Mamba"
+# step.
+
+# Training only
+tensorboard>=2.17.0
+submitit>=1.5.1
+pandas>=2.2.2
+pycocotools>=2.0.8
+tensordict>=0.5.0
+eva-decord>=0.6.1
+fvcore>=0.1.5            # CosineParamScheduler used by the training LR schedule
